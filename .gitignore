@@ -1,0 +1,17 @@
+# PDFs del curso (material del profesor, no subir)
+Teoria/
+*.pdf
+
+# Videos
+*.mp4
+
+# Archivos comprimidos
+*.zip
+*.gz
+
+# Checkpoints de Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
