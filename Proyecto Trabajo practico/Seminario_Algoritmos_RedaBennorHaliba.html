@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Seminario_Algoritmos_P2</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Seminario_Algoritmos_RedaBennorHaliba</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7803,21 +7803,19 @@ a.anchor-link {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="Algoritmos-de-Optimizaci%C3%B3n---Trabajo-Pr%C3%A1ctico">Algoritmos de Optimización - Trabajo Práctico<a class="anchor-link" href="#Algoritmos-de-Optimizaci%C3%B3n---Trabajo-Pr%C3%A1ctico">¶</a></h1><p><strong>Nombre y Apellidos:</strong> Reda Bennor Haliba</p>
-<p><strong>URL del repositorio:</strong> <a href="https://github.com/redaBencworworben/03MIAR---Algoritmos-de-Optimizacion">https://github.com/redaBencworworben/03MIAR---Algoritmos-de-Optimizacion</a></p>
+<p><strong>URL del repositorio:</strong> <a href="https://github.com/Reda2093/03MIAR---Algoritmos-de-Optimizacion">https://github.com/Reda2093/03MIAR---Algoritmos-de-Optimizacion</a></p>
 <p><strong>Problema seleccionado:</strong></p>
 <blockquote>
 <p><strong>2. Organizar los horarios de partidos de La Liga</strong></p>
 </blockquote>
-<h3 id="Descripci%C3%B3n-del-problema">Descripción del problema<a class="anchor-link" href="#Descripci%C3%B3n-del-problema">¶</a></h3><p>Desde La Liga de fútbol profesional se pretende organizar los horarios de los partidos de liga de cada jornada. Se debe diseñar un algoritmo que realice la asignación de los partidos a los horarios de forma que <strong>maximice la audiencia</strong>.</p>
+<h3 id="Descripci%C3%B3n-del-problema">Descripción del problema<a class="anchor-link" href="#Descripci%C3%B3n-del-problema">¶</a></h3><p>La Liga de fútbol profesional quiere organizar los horarios de los partidos de cada jornada para <strong>maximizar la audiencia total</strong>.</p>
 <p><strong>Datos del problema:</strong></p>
 <ul>
-<li>20 equipos → 10 partidos por jornada</li>
-<li>10 franjas horarias disponibles</li>
-<li>3 categorías de equipos: A (3 equipos), B (11 equipos), C (6 equipos)</li>
-<li>Audiencia base según categorías (en millones, referencia: Sábado 20h)</li>
-<li>Coeficientes de ponderación por horario</li>
-<li>Reducción por coincidencia de partidos</li>
-<li>Obligatorio: 1 partido el viernes y 1 el lunes</li>
+<li>20 equipos en total → 10 partidos por jornada</li>
+<li>10 franjas horarias (viernes a lunes)</li>
+<li>Equipos clasificados en 3 categorías: A (3), B (11), C (6)</li>
+<li>La audiencia depende de: categorías de los equipos, horario del partido y coincidencia con otros partidos</li>
+<li>Restricción: obligatorio 1 partido el viernes y 1 el lunes</li>
 </ul>
 </div>
 </div>
@@ -7830,7 +7828,7 @@ a.anchor-link {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="1.-Carga-de-datos-y-modelado">1. Carga de datos y modelado<a class="anchor-link" href="#1.-Carga-de-datos-y-modelado">¶</a></h2>
+<h2 id="Carga-de-datos-y-modelado">Carga de datos y modelado<a class="anchor-link" href="#Carga-de-datos-y-modelado">¶</a></h2>
 </div>
 </div>
 </div>
@@ -7852,7 +7850,6 @@ a.anchor-link {
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
-<span class="c1"># Semilla para reproducibilidad</span>
 <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
@@ -7868,20 +7865,14 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># ============================================================</span>
-<span class="c1"># DATOS DEL PROBLEMA</span>
-<span class="c1"># ============================================================</span>
-
-<span class="c1"># --- Categorías de equipos ---</span>
-<span class="c1"># A: 3 equipos (más seguidores), B: 11 equipos, C: 6 equipos (menos seguidores)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Categorías de equipos: A (top 3), B (medio 11), C (bajo 6)</span>
 <span class="n">EQUIPOS_A</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">EQUIPOS_B</span> <span class="o">=</span> <span class="mi">11</span>
 <span class="n">EQUIPOS_C</span> <span class="o">=</span> <span class="mi">6</span>
 <span class="n">TOTAL_EQUIPOS</span> <span class="o">=</span> <span class="n">EQUIPOS_A</span> <span class="o">+</span> <span class="n">EQUIPOS_B</span> <span class="o">+</span> <span class="n">EQUIPOS_C</span>  <span class="c1"># 20</span>
 <span class="n">PARTIDOS_POR_JORNADA</span> <span class="o">=</span> <span class="n">TOTAL_EQUIPOS</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># 10</span>
 
-<span class="c1"># --- Audiencia base (millones) en Sábado 20h (el mejor horario) ---</span>
-<span class="c1"># Matriz simétrica: audiencia_base[cat_local][cat_visitante]</span>
+<span class="c1"># Audiencia base en millones (referencia: Sábado 20h)</span>
 <span class="n">CATEGORIAS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">]</span>
 <span class="n">AUDIENCIA_BASE</span> <span class="o">=</span> <span class="p">{</span>
     <span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">):</span> <span class="mf">2.0</span><span class="p">,</span>
@@ -7892,25 +7883,23 @@ a.anchor-link {
     <span class="p">(</span><span class="s1">'C'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">):</span> <span class="mf">0.47</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="c1"># --- Franjas horarias disponibles ---</span>
-<span class="c1"># Formato: (día, hora) -&gt; código</span>
+<span class="c1"># Franjas horarias disponibles (día, hora)</span>
 <span class="n">HORARIOS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s1">'Viernes'</span><span class="p">,</span> <span class="s1">'20h'</span><span class="p">),</span>   <span class="c1"># V20 - índice 0</span>
-    <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'12h'</span><span class="p">),</span>   <span class="c1"># S12 - índice 1</span>
-    <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'16h'</span><span class="p">),</span>   <span class="c1"># S16 - índice 2</span>
-    <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'18h'</span><span class="p">),</span>   <span class="c1"># S18 - índice 3</span>
-    <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'20h'</span><span class="p">),</span>   <span class="c1"># S20 - índice 4</span>
-    <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'12h'</span><span class="p">),</span>   <span class="c1"># D12 - índice 5</span>
-    <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'16h'</span><span class="p">),</span>   <span class="c1"># D16 - índice 6</span>
-    <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'18h'</span><span class="p">),</span>   <span class="c1"># D18 - índice 7</span>
-    <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'20h'</span><span class="p">),</span>   <span class="c1"># D20 - índice 8</span>
-    <span class="p">(</span><span class="s1">'Lunes'</span><span class="p">,</span>   <span class="s1">'20h'</span><span class="p">),</span>   <span class="c1"># L20 - índice 9</span>
+    <span class="p">(</span><span class="s1">'Viernes'</span><span class="p">,</span> <span class="s1">'20h'</span><span class="p">),</span>   <span class="c1"># 0</span>
+    <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'12h'</span><span class="p">),</span>   <span class="c1"># 1</span>
+    <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'16h'</span><span class="p">),</span>   <span class="c1"># 2</span>
+    <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'18h'</span><span class="p">),</span>   <span class="c1"># 3</span>
+    <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'20h'</span><span class="p">),</span>   <span class="c1"># 4</span>
+    <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'12h'</span><span class="p">),</span>   <span class="c1"># 5</span>
+    <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'16h'</span><span class="p">),</span>   <span class="c1"># 6</span>
+    <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'18h'</span><span class="p">),</span>   <span class="c1"># 7</span>
+    <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'20h'</span><span class="p">),</span>   <span class="c1"># 8</span>
+    <span class="p">(</span><span class="s1">'Lunes'</span><span class="p">,</span>   <span class="s1">'20h'</span><span class="p">),</span>   <span class="c1"># 9</span>
 <span class="p">]</span>
-<span class="n">NOMBRES_HORARIOS</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">HORARIOS</span><span class="p">]</span>  <span class="c1"># V20, S12, ...</span>
-<span class="n">NUM_HORARIOS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">HORARIOS</span><span class="p">)</span>  <span class="c1"># 10</span>
+<span class="n">NOMBRES_HORARIOS</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">HORARIOS</span><span class="p">]</span>
+<span class="n">NUM_HORARIOS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">HORARIOS</span><span class="p">)</span>
 
-<span class="c1"># --- Coeficiente de ponderación por horario ---</span>
-<span class="c1"># Reduce la audiencia base según día y hora (1.0 = máximo = Sábado 20h)</span>
+<span class="c1"># Coeficiente de ponderación por horario (1.0 = Sábado 20h, el mejor)</span>
 <span class="n">PONDERACION</span> <span class="o">=</span> <span class="p">{</span>
     <span class="p">(</span><span class="s1">'Viernes'</span><span class="p">,</span> <span class="s1">'20h'</span><span class="p">):</span> <span class="mf">0.40</span><span class="p">,</span>
     <span class="p">(</span><span class="s1">'Sábado'</span><span class="p">,</span>  <span class="s1">'12h'</span><span class="p">):</span> <span class="mf">0.55</span><span class="p">,</span>
@@ -7923,23 +7912,20 @@ a.anchor-link {
     <span class="p">(</span><span class="s1">'Domingo'</span><span class="p">,</span> <span class="s1">'20h'</span><span class="p">):</span> <span class="mf">1.00</span><span class="p">,</span>
     <span class="p">(</span><span class="s1">'Lunes'</span><span class="p">,</span>   <span class="s1">'20h'</span><span class="p">):</span> <span class="mf">0.40</span><span class="p">,</span>
 <span class="p">}</span>
-
-<span class="c1"># Vector de ponderación en orden de HORARIOS</span>
 <span class="n">POND_VECTOR</span> <span class="o">=</span> <span class="p">[</span><span class="n">PONDERACION</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">HORARIOS</span><span class="p">]</span>
 
-<span class="c1"># --- Tabla de reducción por coincidencia ---</span>
-<span class="c1"># coincidencias = número de OTROS partidos al mismo tiempo</span>
-<span class="c1"># El factor es (1 - porcentaje_reduccion)</span>
+<span class="c1"># Reducción por coincidencia (cuántos OTROS partidos hay a la misma hora)</span>
+<span class="c1"># El valor es el factor multiplicativo que queda (1 - %reducción)</span>
 <span class="n">REDUCCION_COINCIDENCIA</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="mi">0</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>   <span class="c1"># Solo: sin reducción</span>
-    <span class="mi">1</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>   <span class="c1"># 2 partidos a la vez: -25%</span>
-    <span class="mi">2</span><span class="p">:</span> <span class="mf">0.55</span><span class="p">,</span>   <span class="c1"># 3 partidos a la vez: -45%</span>
-    <span class="mi">3</span><span class="p">:</span> <span class="mf">0.40</span><span class="p">,</span>   <span class="c1"># 4 partidos: -60%</span>
-    <span class="mi">4</span><span class="p">:</span> <span class="mf">0.30</span><span class="p">,</span>   <span class="c1"># 5 partidos: -70%</span>
-    <span class="mi">5</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>   <span class="c1"># 6 partidos: -75%</span>
-    <span class="mi">6</span><span class="p">:</span> <span class="mf">0.22</span><span class="p">,</span>   <span class="c1"># 7 partidos: -78%</span>
-    <span class="mi">7</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">,</span>   <span class="c1"># 8 partidos: -80%</span>
-    <span class="mi">8</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">,</span>   <span class="c1"># 9 partidos: -80%</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>   <span class="c1"># solo → sin reducción</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>   <span class="c1"># -25%</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="mf">0.55</span><span class="p">,</span>   <span class="c1"># -45%</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="mf">0.40</span><span class="p">,</span>   <span class="c1"># -60%</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="mf">0.30</span><span class="p">,</span>   <span class="c1"># -70%</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>   <span class="c1"># -75%</span>
+    <span class="mi">6</span><span class="p">:</span> <span class="mf">0.22</span><span class="p">,</span>   <span class="c1"># -78%</span>
+    <span class="mi">7</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">,</span>   <span class="c1"># -80%</span>
+    <span class="mi">8</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">,</span>   <span class="c1"># -80%</span>
 <span class="p">}</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Datos cargados correctamente."</span><span class="p">)</span>
@@ -7980,7 +7966,7 @@ Ponderaciones: [0.4, 0.55, 0.7, 0.8, 1.0, 0.45, 0.75, 0.85, 1.0, 0.4]
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Mostrar tablas de datos de forma legible</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Mostrar las tablas para verificar que los datos están bien</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"=== Audiencia base (millones, referencia Sábado 20h) ==="</span><span class="p">)</span>
 <span class="n">df_aud</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
     <span class="p">[[</span><span class="n">AUDIENCIA_BASE</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="s1">'-'</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">CATEGORIAS</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">CATEGORIAS</span><span class="p">],</span>
@@ -7989,9 +7975,7 @@ Ponderaciones: [0.4, 0.55, 0.7, 0.8, 1.0, 0.45, 0.75, 0.85, 1.0, 0.4]
 <span class="nb">print</span><span class="p">(</span><span class="n">df_aud</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">=== Coeficientes de ponderación por horario ==="</span><span class="p">)</span>
-<span class="n">df_pond</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-    <span class="p">{</span><span class="s1">'Horario'</span><span class="p">:</span> <span class="n">NOMBRES_HORARIOS</span><span class="p">,</span> <span class="s1">'Coeficiente'</span><span class="p">:</span> <span class="n">POND_VECTOR</span><span class="p">}</span>
-<span class="p">)</span>
+<span class="n">df_pond</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'Horario'</span><span class="p">:</span> <span class="n">NOMBRES_HORARIOS</span><span class="p">,</span> <span class="s1">'Coeficiente'</span><span class="p">:</span> <span class="n">POND_VECTOR</span><span class="p">})</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df_pond</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">=== Reducción por coincidencia ==="</span><span class="p">)</span>
@@ -8055,22 +8039,17 @@ Domingo20         1.00
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="2.-An%C3%A1lisis-del-espacio-de-soluciones">2. Análisis del espacio de soluciones<a class="anchor-link" href="#2.-An%C3%A1lisis-del-espacio-de-soluciones">¶</a></h2><h3 id="(*)-%C2%BFCu%C3%A1ntas-posibilidades-hay-sin-tener-en-cuenta-las-restricciones?">(*) ¿Cuántas posibilidades hay sin tener en cuenta las restricciones?<a class="anchor-link" href="#(*)-%C2%BFCu%C3%A1ntas-posibilidades-hay-sin-tener-en-cuenta-las-restricciones?">¶</a></h3><p>Sin restricciones, tenemos 10 partidos y 10 franjas horarias. Si cada partido puede ir a cualquier franja (permitiendo múltiples partidos por franja), el número de asignaciones posibles es:</p>
-<p>$$10^{10} = 10.000.000.000$$</p>
-<p>Si asignamos exactamente un partido por franja (biyección), las posibilidades son:</p>
-<p>$$10! = 3.628.800$$</p>
-<h3 id="(*)-%C2%BFCu%C3%A1ntas-posibilidades-hay-teniendo-en-cuenta-todas-las-restricciones?">(*) ¿Cuántas posibilidades hay teniendo en cuenta todas las restricciones?<a class="anchor-link" href="#(*)-%C2%BFCu%C3%A1ntas-posibilidades-hay-teniendo-en-cuenta-todas-las-restricciones?">¶</a></h3><p>Con la restricción de que se permite la coincidencia de horarios (varios partidos en la misma franja), pero <strong>obligatoriamente</strong> debe haber exactamente 1 partido el viernes y 1 el lunes, tenemos:</p>
+<h2 id="An%C3%A1lisis-del-espacio-de-soluciones">Análisis del espacio de soluciones<a class="anchor-link" href="#An%C3%A1lisis-del-espacio-de-soluciones">¶</a></h2><h3 id="%C2%BFCu%C3%A1ntas-posibilidades-hay-sin-tener-en-cuenta-las-restricciones?">¿Cuántas posibilidades hay sin tener en cuenta las restricciones?<a class="anchor-link" href="#%C2%BFCu%C3%A1ntas-posibilidades-hay-sin-tener-en-cuenta-las-restricciones?">¶</a></h3><p>Si cada partido puede ir a cualquier franja (permitiendo varios partidos a la vez), tenemos $10^{10} = 10.000.000.000$ asignaciones posibles.</p>
+<p>Ahora, si hacemos que cada partido vaya a una franja distinta (biyección), son $10! = 3.628.800$ permutaciones.</p>
+<h3 id="%C2%BFCu%C3%A1ntas-posibilidades-hay-con-restricciones?">¿Cuántas posibilidades hay con restricciones?<a class="anchor-link" href="#%C2%BFCu%C3%A1ntas-posibilidades-hay-con-restricciones?">¶</a></h3><p>La restricción principal es que tiene que haber exactamente 1 partido el viernes y 1 el lunes. Si permitimos coincidencias en las franjas de sábado/domingo:</p>
 <ul>
-<li>Elegir 1 de 10 partidos para el viernes: $C(10,1) = 10$</li>
-<li>Elegir 1 de 9 restantes para el lunes: $C(9,1) = 9$</li>
-<li>Los 8 partidos restantes se reparten entre 8 franjas de sábado/domingo, pudiendo coincidir: $8^8 = 16.777.216$</li>
+<li>Elegir qué partido va el viernes: $C(10,1) = 10$</li>
+<li>Elegir qué partido va el lunes (de los 9 restantes): $C(9,1) = 9$</li>
+<li>Los 8 que quedan se reparten entre 8 franjas sáb/dom, pudiendo coincidir: $8^8 = 16.777.216$</li>
 <li><strong>Total: $10 \times 9 \times 8^8 = 1.509.949.440$</strong></li>
 </ul>
-<p>Si se asigna exactamente 1 partido por franja (sin coincidencias):</p>
-<ul>
-<li><strong>Total: $10 \times 9 \times 8! = 3.628.800$</strong> (que es simplemente $10!$)</li>
-</ul>
-<p>Ambos escenarios son explorables computacionalmente (millones, no billones). La fuerza bruta es <strong>viable</strong> para este problema.</p>
+<p>Sin coincidencias (1 partido por franja): <strong>$10! = 3.628.800$</strong></p>
+<p>En cualquier caso, el espacio es del orden de millones, así que la fuerza bruta es <strong>viable</strong> para este tamaño de problema.</p>
 </div>
 </div>
 </div>
@@ -8127,19 +8106,20 @@ Nota: 10! = 3,628,800 es abordable por fuerza bruta.
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="3.-Modelo-para-el-espacio-de-soluciones">3. Modelo para el espacio de soluciones<a class="anchor-link" href="#3.-Modelo-para-el-espacio-de-soluciones">¶</a></h2><h3 id="(*)-%C2%BFCu%C3%A1l-es-la-estructura-de-datos-que-mejor-se-adapta-al-problema?">(*) ¿Cuál es la estructura de datos que mejor se adapta al problema?<a class="anchor-link" href="#(*)-%C2%BFCu%C3%A1l-es-la-estructura-de-datos-que-mejor-se-adapta-al-problema?">¶</a></h3><p>La estructura elegida es un <strong>vector de asignación</strong> (lista) donde el índice $i$ representa el partido $i$ y el valor es el índice de la franja horaria asignada.</p>
+<h2 id="Modelo-para-el-espacio-de-soluciones">Modelo para el espacio de soluciones<a class="anchor-link" href="#Modelo-para-el-espacio-de-soluciones">¶</a></h2><h3 id="%C2%BFQu%C3%A9-estructura-de-datos-usamos?">¿Qué estructura de datos usamos?<a class="anchor-link" href="#%C2%BFQu%C3%A9-estructura-de-datos-usamos?">¶</a></h3><p>Uso un <strong>vector de asignación</strong> (una lista de Python) donde la posición $i$ indica a qué franja horaria se asigna el partido $i$.</p>
+<p>Por ejemplo:</p>
 <div class="highlight"><pre><span></span><span class="n">asignacion</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
-<span class="c1"># Partido 0 -&gt; Viernes 20h (franja 0)</span>
-<span class="c1"># Partido 1 -&gt; Sábado 12h (franja 1)</span>
-<span class="c1"># ...</span>
+<span class="c1"># Partido 0 → Viernes 20h (franja 0)</span>
+<span class="c1"># Partido 1 → Sábado 12h (franja 1)</span>
+<span class="c1"># etc.</span>
 </pre></div>
-<p><strong>Argumentación:</strong></p>
+<p>¿Por qué esta estructura?</p>
 <ul>
-<li>Cada partido tiene exactamente una franja asignada</li>
-<li>Una permutación de [0..9] representa una asignación sin coincidencias</li>
-<li>Fácil de generar con <code>itertools.permutations</code></li>
-<li>Calcular coincidencias: contar cuántos partidos comparten la misma franja</li>
-<li>Cada partido se modela como una tupla <code>(categoria_local, categoria_visitante)</code></li>
+<li>Cada partido tiene exactamente una franja → un valor por posición</li>
+<li>Si no permitimos coincidencias, la solución es simplemente una permutación de [0..9]</li>
+<li>Se genera fácil con <code>itertools.permutations</code></li>
+<li>Para ver coincidencias basta con contar repeticiones en el vector</li>
+<li>Cada partido se modela como tupla <code>(categoria_local, categoria_visitante)</code></li>
 </ul>
 </div>
 </div>
@@ -8152,17 +8132,17 @@ Nota: 10! = 3,628,800 es abordable por fuerza bruta.
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="4.-Funci%C3%B3n-objetivo">4. Función objetivo<a class="anchor-link" href="#4.-Funci%C3%B3n-objetivo">¶</a></h2><h3 id="(*)-%C2%BFCu%C3%A1l-es-la-funci%C3%B3n-objetivo?">(*) ¿Cuál es la función objetivo?<a class="anchor-link" href="#(*)-%C2%BFCu%C3%A1l-es-la-funci%C3%B3n-objetivo?">¶</a></h3><p>La función objetivo es la <strong>audiencia total</strong> de la jornada:</p>
-<p>$$f(S) = \sum_{i=1}^{10} \text{audiencia\_base}(p_i) \times \text{ponderaci\acute{o}n}(h_i) \times \text{coincidencia}(h_i)$$</p>
+<h2 id="Funci%C3%B3n-objetivo">Función objetivo<a class="anchor-link" href="#Funci%C3%B3n-objetivo">¶</a></h2><h3 id="%C2%BFCu%C3%A1l-es-la-funci%C3%B3n-objetivo?">¿Cuál es la función objetivo?<a class="anchor-link" href="#%C2%BFCu%C3%A1l-es-la-funci%C3%B3n-objetivo?">¶</a></h3><p>Queremos <strong>maximizar la audiencia total</strong> de la jornada. Para cada partido $i$, su audiencia se calcula como:</p>
+<p>$$\text{audiencia}_i = \text{base}(p_i) \times \text{pond}(h_i) \times \text{coinc}(h_i)$$</p>
+<p>Y la función objetivo es la suma:</p>
+<p>$$f(S) = \sum_{i=1}^{10} \text{audiencia}_i$$</p>
 <p>Donde:</p>
 <ul>
-<li>$p_i$ es el partido $i$ con sus categorías de equipos</li>
-<li>$h_i$ es la franja horaria asignada al partido $i$</li>
-<li>$\text{audiencia\_base}(p_i)$ depende de las categorías de los equipos</li>
-<li>$\text{ponderaci\acute{o}n}(h_i)$ es el coeficiente del horario</li>
-<li>$\text{coincidencia}(h_i)$ es el factor de reducción según cuántos otros partidos coinciden en el mismo horario</li>
+<li>$\text{base}(p_i)$: audiencia base según las categorías de los equipos (ej: A vs B = 1.3M)</li>
+<li>$\text{pond}(h_i)$: coeficiente del horario asignado (ej: Sábado 20h = 1.0)</li>
+<li>$\text{coinc}(h_i)$: penalización si hay otros partidos a la misma hora</li>
 </ul>
-<h3 id="(*)-%C2%BFEs-un-problema-de-maximizaci%C3%B3n-o-minimizaci%C3%B3n?">(*) ¿Es un problema de maximización o minimización?<a class="anchor-link" href="#(*)-%C2%BFEs-un-problema-de-maximizaci%C3%B3n-o-minimizaci%C3%B3n?">¶</a></h3><p>Es un <strong>problema de maximización</strong>. Queremos maximizar la audiencia total.</p>
+<p>Es un <strong>problema de maximización</strong>.</p>
 </div>
 </div>
 </div>
@@ -8175,10 +8155,7 @@ Nota: 10! = 3,628,800 es abordable por fuerza bruta.
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generar_jornada_ejemplo</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Genera la jornada de ejemplo del enunciado para verificar los cálculos.</span>
-<span class="sd">    Cada partido es (cat_local, cat_visitante, nombre_descriptivo).</span>
-<span class="sd">    """</span>
+<span class="w">    </span><span class="sd">"""Jornada de ejemplo del enunciado (página 7 del PDF) para verificar cálculos."""</span>
     <span class="n">partidos</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="s1">'B'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'Celta - Real Madrid'</span><span class="p">),</span>
         <span class="p">(</span><span class="s1">'B'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'Valencia - R. Sociedad'</span><span class="p">),</span>
@@ -8195,19 +8172,10 @@ Nota: 10! = 3,628,800 es abordable por fuerza bruta.
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">calcular_audiencia</span><span class="p">(</span><span class="n">partidos</span><span class="p">,</span> <span class="n">asignacion</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Calcula la audiencia total de una jornada dada una asignación de partidos a horarios.</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        partidos: lista de tuplas (cat_local, cat_visitante, nombre)</span>
-<span class="sd">        asignacion: lista de índices de franja horaria para cada partido</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        (audiencia_total, detalle_por_partido)</span>
-<span class="sd">    """</span>
+<span class="w">    </span><span class="sd">"""Calcula la audiencia total y devuelve el detalle por partido."""</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">partidos</span><span class="p">)</span>
     
-    <span class="c1"># Contar coincidencias por horario</span>
+    <span class="c1"># Contar cuántos partidos hay en cada horario</span>
     <span class="n">conteo_horario</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">asignacion</span><span class="p">:</span>
         <span class="n">conteo_horario</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">conteo_horario</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
@@ -8220,17 +8188,11 @@ Nota: 10! = 3,628,800 es abordable por fuerza bruta.
         <span class="n">horario_idx</span> <span class="o">=</span> <span class="n">asignacion</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">horario</span> <span class="o">=</span> <span class="n">HORARIOS</span><span class="p">[</span><span class="n">horario_idx</span><span class="p">]</span>
         
-        <span class="c1"># Audiencia base según categorías</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">AUDIENCIA_BASE</span><span class="p">[(</span><span class="n">cat_l</span><span class="p">,</span> <span class="n">cat_v</span><span class="p">)]</span>
-        
-        <span class="c1"># Ponderación por horario</span>
         <span class="n">pond</span> <span class="o">=</span> <span class="n">PONDERACION</span><span class="p">[</span><span class="n">horario</span><span class="p">]</span>
-        
-        <span class="c1"># Factor de coincidencia</span>
-        <span class="n">coincidencias</span> <span class="o">=</span> <span class="n">conteo_horario</span><span class="p">[</span><span class="n">horario_idx</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># Otros partidos al mismo tiempo</span>
+        <span class="n">coincidencias</span> <span class="o">=</span> <span class="n">conteo_horario</span><span class="p">[</span><span class="n">horario_idx</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># otros partidos a la misma hora</span>
         <span class="n">factor_coinc</span> <span class="o">=</span> <span class="n">REDUCCION_COINCIDENCIA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">coincidencias</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">)</span>
         
-        <span class="c1"># Audiencia del partido</span>
         <span class="n">aud_partido</span> <span class="o">=</span> <span class="n">base</span> <span class="o">*</span> <span class="n">pond</span> <span class="o">*</span> <span class="n">factor_coinc</span>
         <span class="n">audiencia_total</span> <span class="o">+=</span> <span class="n">aud_partido</span>
         
@@ -8250,9 +8212,7 @@ Nota: 10! = 3,628,800 es abordable por fuerza bruta.
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">calcular_audiencia_rapida</span><span class="p">(</span><span class="n">partidos</span><span class="p">,</span> <span class="n">asignacion</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Versión rápida que solo devuelve la audiencia total (para optimización).</span>
-<span class="sd">    """</span>
+<span class="w">    </span><span class="sd">"""Versión rápida que solo devuelve el total (para usar en los bucles de optimización)."""</span>
     <span class="n">conteo_horario</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">asignacion</span><span class="p">:</span>
         <span class="n">conteo_horario</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">conteo_horario</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
@@ -8334,8 +8294,7 @@ Audiencia total: 5.88 millones
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="5.-Algoritmo-por-fuerza-bruta">5. Algoritmo por fuerza bruta<a class="anchor-link" href="#5.-Algoritmo-por-fuerza-bruta">¶</a></h2><h3 id="Dise%C3%B1o-del-algoritmo">Diseño del algoritmo<a class="anchor-link" href="#Dise%C3%B1o-del-algoritmo">¶</a></h3><p>Dado que el espacio de soluciones es $10! = 3.628.800$ (asignando un partido por franja sin coincidencias), podemos explorar <strong>todas</strong> las permutaciones y encontrar la óptima.</p>
-<p>También implementamos una versión con coincidencias permitidas (más compleja).</p>
+<h2 id="Algoritmo-por-fuerza-bruta">Algoritmo por fuerza bruta<a class="anchor-link" href="#Algoritmo-por-fuerza-bruta">¶</a></h2><p>Como el espacio de búsqueda sin coincidencias es de $10! = 3.628.800$ permutaciones, podemos probar <strong>todas</strong> y quedarnos con la mejor. Tarda un poco pero es viable.</p>
 </div>
 </div>
 </div>
@@ -8348,28 +8307,13 @@ Audiencia total: 5.88 millones
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">fuerza_bruta_sin_coincidencia</span><span class="p">(</span><span class="n">partidos</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Fuerza bruta: prueba todas las permutaciones (10! = 3.628.800)</span>
-<span class="sd">    asignando exactamente 1 partido por franja horaria.</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        partidos: lista de tuplas (cat_local, cat_visitante, nombre)</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        (mejor_asignacion, mejor_audiencia, total_evaluadas)</span>
-<span class="sd">    """</span>
+<span class="w">    </span><span class="sd">"""Prueba TODAS las permutaciones (10!) y devuelve la mejor asignación."""</span>
     <span class="n">mejor_asignacion</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">mejor_audiencia</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
     
-    <span class="c1"># Generar todas las permutaciones de 10 franjas</span>
     <span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)):</span>
         <span class="n">asignacion</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
-        
-        <span class="c1"># Verificar restricción: franja 0 (V20) y franja 9 (L20) deben tener partido</span>
-        <span class="c1"># En una permutación completa, todas las franjas tienen exactamente 1 partido,</span>
-        <span class="c1"># por lo que esta restricción se cumple automáticamente.</span>
-        
         <span class="n">aud</span> <span class="o">=</span> <span class="n">calcular_audiencia_rapida</span><span class="p">(</span><span class="n">partidos</span><span class="p">,</span> <span class="n">asignacion</span><span class="p">)</span>
         <span class="n">total</span> <span class="o">+=</span> <span class="mi">1</span>
         
@@ -8380,7 +8324,7 @@ Audiencia total: 5.88 millones
     <span class="k">return</span> <span class="n">mejor_asignacion</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">mejor_audiencia</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">total</span>
 
 
-<span class="c1"># Ejecutar fuerza bruta</span>
+<span class="c1"># Ejecutar</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Ejecutando fuerza bruta (10! = 3.628.800 permutaciones)..."</span><span class="p">)</span>
 <span class="n">inicio</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="n">mejor_fb</span><span class="p">,</span> <span class="n">aud_fb</span><span class="p">,</span> <span class="n">total_fb</span> <span class="o">=</span> <span class="n">fuerza_bruta_sin_coincidencia</span><span class="p">(</span><span class="n">partidos_ejemplo</span><span class="p">)</span>
@@ -8412,7 +8356,7 @@ Audiencia total: 5.88 millones
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Tiempo: 57.04 segundos
+<pre>Tiempo: 56.07 segundos
 Permutaciones evaluadas: 3,628,800
 Mejor audiencia: 6.86 millones
 
@@ -8440,22 +8384,19 @@ Valencia - R. Sociedad        B-A Domingo18  1.30         0.85         1.10     
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Complejidad-del-algoritmo-por-fuerza-bruta">Complejidad del algoritmo por fuerza bruta<a class="anchor-link" href="#Complejidad-del-algoritmo-por-fuerza-bruta">¶</a></h3><ul>
-<li><p><strong>Sin coincidencias</strong>: Se generan $n!$ permutaciones, y cada una se evalúa en $O(n)$</p>
+<h3 id="Complejidad-de-la-fuerza-bruta">Complejidad de la fuerza bruta<a class="anchor-link" href="#Complejidad-de-la-fuerza-bruta">¶</a></h3><ul>
+<li><p><strong>Sin coincidencias</strong>: generamos $n!$ permutaciones, cada una se evalúa en $O(n)$ → <strong>$O(n! \cdot n)$</strong></p>
 <ul>
-<li><strong>Complejidad: $O(n! \cdot n)$</strong> donde $n = 10$</li>
-<li>Total: $10! \times 10 = 36.288.000$ operaciones</li>
-<li>Viable en pocos segundos</li>
+<li>Para $n=10$: $3.628.800 \times 10 \approx 36$ millones de operaciones → tarda ~1 minuto</li>
 </ul>
 </li>
-<li><p><strong>Con coincidencias</strong>: El espacio crece a $n^n$ asignaciones posibles</p>
+<li><p><strong>Con coincidencias</strong>: el espacio sería $n^n$ → <strong>$O(n^n \cdot n)$</strong></p>
 <ul>
-<li><strong>Complejidad: $O(n^n \cdot n)$</strong></li>
-<li>Total: $10^{10} \times 10 = 100.000.000.000$ → inviable</li>
+<li>Para $n=10$: $10^{10} \times 10 = 10^{11}$ operaciones → inviable</li>
 </ul>
 </li>
 </ul>
-<p>La fuerza bruta sin coincidencias es factible y nos da la <strong>solución óptima global</strong> para ese escenario.</p>
+<p>Así que para este problema la fuerza bruta sin coincidencias funciona bien y nos da el <strong>óptimo global</strong>.</p>
 </div>
 </div>
 </div>
@@ -8467,16 +8408,12 @@ Valencia - R. Sociedad        B-A Domingo18  1.30         0.85         1.10     
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="6.-Algoritmos-mejorados">6. Algoritmos mejorados<a class="anchor-link" href="#6.-Algoritmos-mejorados">¶</a></h2><h3 id="(*)-Dise%C3%B1o-de-algoritmos-que-mejoran-la-fuerza-bruta">(*) Diseño de algoritmos que mejoran la fuerza bruta<a class="anchor-link" href="#(*)-Dise%C3%B1o-de-algoritmos-que-mejoran-la-fuerza-bruta">¶</a></h3><p>Aunque la fuerza bruta es viable para $n=10$, implementamos algoritmos más eficientes que escalarían a problemas mayores:</p>
+<h2 id="Algoritmos-mejorados">Algoritmos mejorados<a class="anchor-link" href="#Algoritmos-mejorados">¶</a></h2><p>Aunque la fuerza bruta funciona para $n=10$, implemento dos algoritmos que serían mucho más útiles si el problema fuera más grande:</p>
 <ol>
-<li><strong>Algoritmo Voraz (Greedy)</strong>: Asigna los partidos de mayor audiencia base a los mejores horarios</li>
-<li><strong>Recocido Simulado</strong>: Explora el espacio con movimientos aleatorios y aceptación probabilística</li>
+<li><strong>Voraz (Greedy)</strong>: asigna los mejores partidos a los mejores horarios de forma directa</li>
+<li><strong>Recocido Simulado (SA)</strong>: búsqueda estocástica que acepta empeoramientos con cierta probabilidad</li>
 </ol>
-<p>Estos mejoran la fuerza bruta porque:</p>
-<ul>
-<li>El voraz tiene complejidad $O(n^2)$ frente a $O(n!)$</li>
-<li>El recocido simulado tiene complejidad $O(L \cdot I \cdot n)$, controlable por parámetros</li>
-</ul>
+<p>La ventaja es que el voraz va en $O(n^2)$ y el SA es controlable por parámetros, frente al $O(n!)$ de fuerza bruta.</p>
 </div>
 </div>
 </div>
@@ -8487,7 +8424,7 @@ Valencia - R. Sociedad        B-A Domingo18  1.30         0.85         1.10     
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="6.1-Algoritmo-Voraz-(Greedy)">6.1 Algoritmo Voraz (Greedy)<a class="anchor-link" href="#6.1-Algoritmo-Voraz-(Greedy)">¶</a></h3>
+<h3 id="Algoritmo-Voraz-(Greedy)">Algoritmo Voraz (Greedy)<a class="anchor-link" href="#Algoritmo-Voraz-(Greedy)">¶</a></h3>
 </div>
 </div>
 </div>
@@ -8501,31 +8438,19 @@ Valencia - R. Sociedad        B-A Domingo18  1.30         0.85         1.10     
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">algoritmo_voraz</span><span class="p">(</span><span class="n">partidos</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Algoritmo voraz: asigna los partidos con mayor audiencia base</span>
-<span class="sd">    a las franjas con mejor ponderación.</span>
-<span class="sd">    </span>
-<span class="sd">    Estrategia: ordenar partidos por audiencia base (desc) y</span>
-<span class="sd">    franjas por ponderación (desc), asignar en orden.</span>
-<span class="sd">    Esto maximiza localmente la contribución de cada partido.</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        partidos: lista de tuplas (cat_local, cat_visitante, nombre)</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        (asignacion, audiencia)</span>
+<span class="sd">    Greedy: ordena partidos por audiencia base (de mayor a menor) y</span>
+<span class="sd">    franjas por ponderación (de mayor a menor), y va asignando en orden.</span>
 <span class="sd">    """</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">partidos</span><span class="p">)</span>
     
-    <span class="c1"># Calcular audiencia base de cada partido</span>
+    <span class="c1"># Audiencia base de cada partido</span>
     <span class="n">bases</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">AUDIENCIA_BASE</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">partidos</span><span class="p">)]</span>
-    
-    <span class="c1"># Ordenar partidos por audiencia base descendente</span>
     <span class="n">bases_ordenadas</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     
-    <span class="c1"># Ordenar franjas por ponderación descendente</span>
+    <span class="c1"># Franjas ordenadas de mejor a peor</span>
     <span class="n">franjas_ordenadas</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">h</span><span class="p">:</span> <span class="o">-</span><span class="n">POND_VECTOR</span><span class="p">[</span><span class="n">h</span><span class="p">])</span>
     
-    <span class="c1"># Asignar: mejor partido -&gt; mejor franja disponible</span>
+    <span class="c1"># Asignar mejor partido -&gt; mejor franja libre</span>
     <span class="n">asignacion</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
     <span class="n">franjas_usadas</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     
@@ -8540,7 +8465,6 @@ Valencia - R. Sociedad        B-A Domingo18  1.30         0.85         1.10     
     <span class="k">return</span> <span class="n">asignacion</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">aud</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
 
-<span class="c1"># Ejecutar voraz</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Ejecutando algoritmo voraz..."</span><span class="p">)</span>
 <span class="n">inicio</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="n">asig_voraz</span><span class="p">,</span> <span class="n">aud_voraz</span> <span class="o">=</span> <span class="n">algoritmo_voraz</span><span class="p">(</span><span class="n">partidos_ejemplo</span><span class="p">)</span>
@@ -8565,7 +8489,7 @@ Valencia - R. Sociedad        B-A Domingo18  1.30         0.85         1.10     
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Ejecutando algoritmo voraz...
-Tiempo: 0.000344 segundos
+Tiempo: 0.000470 segundos
 Audiencia: 6.86 millones
 
 Asignación voraz:
@@ -8592,7 +8516,7 @@ Valencia - R. Sociedad        B-A Domingo20  1.30         1.00         1.30     
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="6.2-Recocido-Simulado-(Simulated-Annealing)">6.2 Recocido Simulado (Simulated Annealing)<a class="anchor-link" href="#6.2-Recocido-Simulado-(Simulated-Annealing)">¶</a></h3>
+<h3 id="Recocido-Simulado-(Simulated-Annealing)">Recocido Simulado (Simulated Annealing)<a class="anchor-link" href="#Recocido-Simulado-(Simulated-Annealing)">¶</a></h3>
 </div>
 </div>
 </div>
@@ -8607,22 +8531,12 @@ Valencia - R. Sociedad        B-A Domingo20  1.30         1.00         1.30     
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">recocido_simulado_liga</span><span class="p">(</span><span class="n">partidos</span><span class="p">,</span> <span class="n">temp_inicial</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">temp_final</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
                             <span class="n">factor_enfriamiento</span><span class="o">=</span><span class="mf">0.995</span><span class="p">,</span> <span class="n">iteraciones_por_temp</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Recocido simulado para maximizar audiencia de La Liga.</span>
-<span class="sd">    </span>
-<span class="sd">    Genera vecinos intercambiando las franjas de dos partidos.</span>
-<span class="sd">    Acepta soluciones peores con probabilidad decreciente.</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        partidos: lista de partidos</span>
-<span class="sd">        temp_inicial, temp_final, factor_enfriamiento: parámetros de temperatura</span>
-<span class="sd">        iteraciones_por_temp: iteraciones por nivel de temperatura</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        (mejor_asignacion, mejor_audiencia, historial)</span>
+<span class="sd">    SA para maximizar audiencia. Genera vecinos intercambiando las franjas</span>
+<span class="sd">    de dos partidos aleatorios. Acepta empeoramientos con prob. e^(delta/T).</span>
 <span class="sd">    """</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">partidos</span><span class="p">)</span>
     
-    <span class="c1"># Solución inicial: permutación aleatoria</span>
+    <span class="c1"># Empezar con una permutación aleatoria</span>
     <span class="n">actual</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
     <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
     <span class="n">aud_actual</span> <span class="o">=</span> <span class="n">calcular_audiencia_rapida</span><span class="p">(</span><span class="n">partidos</span><span class="p">,</span> <span class="n">actual</span><span class="p">)</span>
@@ -8635,15 +8549,14 @@ Valencia - R. Sociedad        B-A Domingo20  1.30         1.00         1.30     
     
     <span class="k">while</span> <span class="n">temp</span> <span class="o">&gt;</span> <span class="n">temp_final</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iteraciones_por_temp</span><span class="p">):</span>
-            <span class="c1"># Generar vecino: intercambiar franjas de 2 partidos</span>
+            <span class="c1"># Vecino: swap de 2 posiciones</span>
             <span class="n">vecino</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
             <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">vecino</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vecino</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">vecino</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">vecino</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             
             <span class="n">aud_vecino</span> <span class="o">=</span> <span class="n">calcular_audiencia_rapida</span><span class="p">(</span><span class="n">partidos</span><span class="p">,</span> <span class="n">vecino</span><span class="p">)</span>
-            <span class="n">delta</span> <span class="o">=</span> <span class="n">aud_vecino</span> <span class="o">-</span> <span class="n">aud_actual</span>  <span class="c1"># Positivo = mejora (maximizamos)</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">aud_vecino</span> <span class="o">-</span> <span class="n">aud_actual</span>
             
-            <span class="c1"># Aceptar si mejora, o con probabilidad e^(delta/T) si empeora</span>
             <span class="k">if</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">delta</span> <span class="o">/</span> <span class="n">temp</span><span class="p">):</span>
                 <span class="n">actual</span> <span class="o">=</span> <span class="n">vecino</span>
                 <span class="n">aud_actual</span> <span class="o">=</span> <span class="n">aud_vecino</span>
@@ -8659,7 +8572,7 @@ Valencia - R. Sociedad        B-A Domingo20  1.30         1.00         1.30     
     <span class="k">return</span> <span class="n">mejor</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">mejor_aud</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">historial</span>
 
 
-<span class="c1"># Ejecutar recocido simulado (5 repeticiones)</span>
+<span class="c1"># Ejecutar SA varias veces para tener resultados más fiables</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Ejecutando recocido simulado (5 repeticiones)...</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 <span class="n">mejor_sa_asig</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">mejor_sa_aud</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -8736,7 +8649,7 @@ Valencia - R. Sociedad        B-A Domingo20  1.30         1.00         1.30     
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>  Rep 5: audiencia = 6.86 millones
 
-Tiempo total: 45.11 segundos
+Tiempo total: 40.34 segundos
 Mejor audiencia SA: 6.86 millones
 
 Mejor asignación SA:
@@ -8763,26 +8676,12 @@ Valencia - R. Sociedad        B-A  Sábado20  1.30         1.00         1.30    
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="(*)-Complejidad-de-los-algoritmos-mejorados">(*) Complejidad de los algoritmos mejorados<a class="anchor-link" href="#(*)-Complejidad-de-los-algoritmos-mejorados">¶</a></h3><p><strong>Algoritmo Voraz:</strong></p>
-<ul>
-<li>Ordenar partidos: $O(n \log n)$</li>
-<li>Ordenar franjas: $O(n \log n)$</li>
-<li>Asignación: $O(n^2)$ (para cada partido, buscar franja disponible)</li>
-<li><strong>Complejidad total: $O(n^2)$</strong></li>
-</ul>
-<p><strong>Recocido Simulado:</strong></p>
-<ul>
-<li>Niveles de temperatura: $L = \log(T_{min}/T_{max}) / \log(\alpha)$</li>
-<li>Iteraciones por nivel: $I$</li>
-<li>Evaluar vecino: $O(n)$</li>
-<li><strong>Complejidad total: $O(L \cdot I \cdot n)$</strong></li>
-</ul>
-<table>
+<h3 id="Complejidad-de-los-algoritmos">Complejidad de los algoritmos<a class="anchor-link" href="#Complejidad-de-los-algoritmos">¶</a></h3><table>
 <thead>
 <tr>
 <th>Algoritmo</th>
 <th>Complejidad</th>
-<th>Calidad</th>
+<th>Calidad de solución</th>
 </tr>
 </thead>
 <tbody>
@@ -8794,7 +8693,7 @@ Valencia - R. Sociedad        B-A  Sábado20  1.30         1.00         1.30    
 <tr>
 <td>Voraz</td>
 <td>$O(n^2)$</td>
-<td>Buena (no óptima)</td>
+<td>Buena, a veces óptima</td>
 </tr>
 <tr>
 <td>Recocido Simulado</td>
@@ -8803,6 +8702,7 @@ Valencia - R. Sociedad        B-A  Sábado20  1.30         1.00         1.30    
 </tr>
 </tbody>
 </table>
+<p>Donde $L$ = niveles de temperatura, $I$ = iteraciones por nivel, $n$ = nº de partidos.</p>
 </div>
 </div>
 </div>
@@ -8814,7 +8714,7 @@ Valencia - R. Sociedad        B-A  Sábado20  1.30         1.00         1.30    
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="7.-Visualizaci%C3%B3n-y-comparaci%C3%B3n-de-resultados">7. Visualización y comparación de resultados<a class="anchor-link" href="#7.-Visualizaci%C3%B3n-y-comparaci%C3%B3n-de-resultados">¶</a></h2>
+<h2 id="Visualizaci%C3%B3n-y-comparaci%C3%B3n">Visualización y comparación<a class="anchor-link" href="#Visualizaci%C3%B3n-y-comparaci%C3%B3n">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8859,9 +8759,9 @@ COMPARACIÓN DE ALGORITMOS
 Algoritmo                      Audiencia (M)   Tiempo (s)  
 -----------------------------------------------------------------
 Ejemplo del enunciado          5.88            -           
-Voraz (Greedy)                 6.86            0.000344    
-Recocido Simulado (mejor)      6.86            45.11       
-Fuerza bruta (óptimo)          6.86            57.04       
+Voraz (Greedy)                 6.86            0.000470    
+Recocido Simulado (mejor)      6.86            40.34       
+Fuerza bruta (óptimo)          6.86            56.07       
 =================================================================
 
 Mejora sobre el ejemplo: 16.7%
@@ -8988,7 +8888,7 @@ Mejora sobre el ejemplo: 16.7%
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="8.-Juego-de-datos-aleatorio">8. Juego de datos aleatorio<a class="anchor-link" href="#8.-Juego-de-datos-aleatorio">¶</a></h2><p>Generamos jornadas aleatorias con diferentes composiciones de partidos.</p>
+<h2 id="Juego-de-datos-aleatorio">Juego de datos aleatorio<a class="anchor-link" href="#Juego-de-datos-aleatorio">¶</a></h2><p>Para comprobar que los algoritmos funcionan bien en general (y no solo con el ejemplo del enunciado), genero jornadas aleatorias con distintas composiciones de partidos.</p>
 </div>
 </div>
 </div>
@@ -9001,40 +8901,29 @@ Mejora sobre el ejemplo: 16.7%
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generar_jornada_aleatoria</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Genera una jornada aleatoria de 10 partidos.</span>
-<span class="sd">    Distribuye los 20 equipos (3A, 11B, 6C) en 10 partidos aleatorios.</span>
-<span class="sd">    """</span>
+<span class="w">    </span><span class="sd">"""Genera una jornada aleatoria mezclando los 20 equipos y emparejándolos."""</span>
     <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    
-    <span class="c1"># Crear lista de equipos por categoría</span>
     <span class="n">equipos</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'A'</span><span class="p">]</span> <span class="o">*</span> <span class="n">EQUIPOS_A</span> <span class="o">+</span> <span class="p">[</span><span class="s1">'B'</span><span class="p">]</span> <span class="o">*</span> <span class="n">EQUIPOS_B</span> <span class="o">+</span> <span class="p">[</span><span class="s1">'C'</span><span class="p">]</span> <span class="o">*</span> <span class="n">EQUIPOS_C</span>
     <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">equipos</span><span class="p">)</span>
     
-    <span class="c1"># Emparejar consecutivamente</span>
     <span class="n">partidos</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">equipos</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
         <span class="n">cat_l</span><span class="p">,</span> <span class="n">cat_v</span> <span class="o">=</span> <span class="n">equipos</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">equipos</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="n">partidos</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cat_l</span><span class="p">,</span> <span class="n">cat_v</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Equipo</span><span class="si">{</span><span class="n">i</span><span class="o">//</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">cat_l</span><span class="si">}</span><span class="s2">) - Equipo</span><span class="si">{</span><span class="n">i</span><span class="o">//</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">cat_v</span><span class="si">}</span><span class="s2">)"</span><span class="p">))</span>
-    
+        <span class="n">partidos</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cat_l</span><span class="p">,</span> <span class="n">cat_v</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Eq</span><span class="si">{</span><span class="n">i</span><span class="o">//</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">cat_l</span><span class="si">}</span><span class="s2">) - Eq</span><span class="si">{</span><span class="n">i</span><span class="o">//</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">cat_v</span><span class="si">}</span><span class="s2">)"</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">partidos</span>
 
 
-<span class="c1"># Generar 5 jornadas aleatorias y aplicar todos los algoritmos</span>
+<span class="c1"># Probar con 5 jornadas aleatorias</span>
 <span class="n">resultados_aleatorios</span> <span class="o">=</span> <span class="p">[]</span>
-
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Aplicando algoritmos a 5 jornadas aleatorias...</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
     <span class="n">partidos_j</span> <span class="o">=</span> <span class="n">generar_jornada_aleatoria</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">j</span> <span class="o">*</span> <span class="mi">17</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span>
-    
-    <span class="c1"># Composición de la jornada</span>
     <span class="n">cats</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">partidos_j</span><span class="p">]</span>
     
-    <span class="c1"># Voraz</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">aud_v</span> <span class="o">=</span> <span class="n">algoritmo_voraz</span><span class="p">(</span><span class="n">partidos_j</span><span class="p">)</span>
     
-    <span class="c1"># Recocido simulado (3 repeticiones)</span>
+    <span class="c1"># SA con 3 repeticiones</span>
     <span class="n">mejor_sa</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
         <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span>
@@ -9044,10 +8933,9 @@ Mejora sobre el ejemplo: 16.7%
         <span class="p">)</span>
         <span class="n">mejor_sa</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">mejor_sa</span><span class="p">,</span> <span class="n">aud_s</span><span class="p">)</span>
     
-    <span class="c1"># Fuerza bruta</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">aud_fb_j</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fuerza_bruta_sin_coincidencia</span><span class="p">(</span><span class="n">partidos_j</span><span class="p">)</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Jornada </span><span class="si">{</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Cats=</span><span class="si">{</span><span class="n">cats</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Jornada </span><span class="si">{</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">cats</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Voraz=</span><span class="si">{</span><span class="n">aud_v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  SA=</span><span class="si">{</span><span class="n">mejor_sa</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  FB=</span><span class="si">{</span><span class="n">aud_fb_j</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     
     <span class="n">resultados_aleatorios</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
@@ -9076,7 +8964,7 @@ Mejora sobre el ejemplo: 16.7%
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Jornada 1: Cats=['C-C', 'B-C', 'B-B', 'C-B', 'C-A', 'B-B', 'C-B', 'B-A', 'A-B', 'B-B']
+<pre>Jornada 1: ['C-C', 'B-C', 'B-B', 'C-B', 'C-A', 'B-B', 'C-B', 'B-A', 'A-B', 'B-B']
   Voraz=6.71  SA=6.71  FB=6.71
 </pre>
 </div>
@@ -9084,7 +8972,7 @@ Mejora sobre el ejemplo: 16.7%
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Jornada 2: Cats=['B-C', 'B-B', 'B-C', 'C-A', 'B-B', 'A-C', 'B-A', 'B-C', 'B-B', 'C-B']
+<pre>Jornada 2: ['B-C', 'B-B', 'B-C', 'C-A', 'B-B', 'A-C', 'B-A', 'B-C', 'B-B', 'C-B']
   Voraz=6.53  SA=6.53  FB=6.53
 </pre>
 </div>
@@ -9092,7 +8980,7 @@ Mejora sobre el ejemplo: 16.7%
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Jornada 3: Cats=['A-C', 'C-A', 'C-B', 'C-B', 'A-B', 'C-B', 'B-B', 'B-C', 'B-B', 'B-B']
+<pre>Jornada 3: ['A-C', 'C-A', 'C-B', 'C-B', 'A-B', 'C-B', 'B-B', 'B-C', 'B-B', 'B-B']
   Voraz=6.53  SA=6.53  FB=6.53
 </pre>
 </div>
@@ -9100,7 +8988,7 @@ Mejora sobre el ejemplo: 16.7%
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Jornada 4: Cats=['B-C', 'C-B', 'A-B', 'A-B', 'B-B', 'B-B', 'C-B', 'B-A', 'C-C', 'B-C']
+<pre>Jornada 4: ['B-C', 'C-B', 'A-B', 'A-B', 'B-B', 'B-B', 'C-B', 'B-A', 'C-C', 'B-C']
   Voraz=6.86  SA=6.86  FB=6.86
 </pre>
 </div>
@@ -9108,7 +8996,7 @@ Mejora sobre el ejemplo: 16.7%
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Jornada 5: Cats=['B-B', 'B-B', 'A-A', 'C-C', 'B-B', 'C-B', 'B-B', 'B-A', 'C-B', 'C-C']
+<pre>Jornada 5: ['B-B', 'B-B', 'A-A', 'C-C', 'B-B', 'C-B', 'B-B', 'B-A', 'C-B', 'C-C']
   Voraz=7.22  SA=7.22  FB=7.22
 </pre>
 </div>
@@ -9179,18 +9067,13 @@ Gap de optimalidad (diferencia vs fuerza bruta):
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="9.-Referencias">9. Referencias<a class="anchor-link" href="#9.-Referencias">¶</a></h2><ol>
-<li><p><strong>Kirkpatrick, S., Gelatt, C. D., &amp; Vecchi, M. P.</strong> (1983). <em>Optimization by Simulated Annealing</em>. Science, 220(4598), 671-680.</p>
-</li>
-<li><p><strong>Cormen, T. H., Leiserson, C. E., Rivest, R. L., &amp; Stein, C.</strong> (2009). <em>Introduction to Algorithms</em> (3rd ed.). MIT Press.</p>
-</li>
-<li><p><strong>Russell, S. &amp; Norvig, P.</strong> (2021). <em>Artificial Intelligence: A Modern Approach</em> (4th ed.). Pearson.</p>
-</li>
-<li><p><strong>Drexl, A., &amp; Knust, S.</strong> (2007). <em>Sports league scheduling: Graph- and resource-based models</em>. Omega, 35(5), 465–471.</p>
-</li>
-<li><p><strong>Python Documentation</strong>: <code>itertools</code>, <code>numpy</code>, <code>matplotlib</code>. <a href="https://docs.python.org/3/">https://docs.python.org/3/</a></p>
-</li>
-</ol>
+<h2 id="Referencias">Referencias<a class="anchor-link" href="#Referencias">¶</a></h2><ul>
+<li>Kirkpatrick, S., Gelatt, C. D., &amp; Vecchi, M. P. (1983). <em>Optimization by Simulated Annealing</em>. Science, 220(4598), 671-680.</li>
+<li>Cormen, T. H. et al. (2009). <em>Introduction to Algorithms</em> (3rd ed.). MIT Press.</li>
+<li>Russell, S. &amp; Norvig, P. (2021). <em>Artificial Intelligence: A Modern Approach</em> (4th ed.). Pearson.</li>
+<li>Drexl, A. &amp; Knust, S. (2007). <em>Sports league scheduling: Graph- and resource-based models</em>. Omega, 35(5), 465-471.</li>
+<li>Documentación de Python: <code>itertools</code>, <code>numpy</code>, <code>matplotlib</code>.</li>
+</ul>
 </div>
 </div>
 </div>
@@ -9202,23 +9085,13 @@ Gap de optimalidad (diferencia vs fuerza bruta):
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <hr/>
-<h2 id="10.-L%C3%ADneas-de-trabajo-futuro">10. Líneas de trabajo futuro<a class="anchor-link" href="#10.-L%C3%ADneas-de-trabajo-futuro">¶</a></h2><ol>
-<li><p><strong>Coincidencia de horarios</strong>: Permitir que varios partidos se asignen a la misma franja horaria, con la penalización por coincidencia. Esto expande el espacio de $n!$ a $n^n$ y requiere metaheurísticas.</p>
-</li>
-<li><p><strong>Múltiples jornadas</strong>: Optimizar la planificación de toda la temporada (38 jornadas), considerando restricciones como que cada equipo no juegue siempre a la misma hora.</p>
-</li>
-<li><p><strong>Audiencias reales</strong>: Integrar datos históricos de audiencia de plataformas como Movistar+ para mejorar las estimaciones de audiencia base.</p>
-</li>
-<li><p><strong>Restricciones adicionales</strong>:</p>
-<ul>
-<li>Equipos de la misma ciudad no juegan el mismo día</li>
-<li>Horarios preferentes por contrato televisivo</li>
-<li>Seguridad y disponibilidad policial</li>
+<h2 id="Posibles-mejoras">Posibles mejoras<a class="anchor-link" href="#Posibles-mejoras">¶</a></h2><ul>
+<li><strong>Coincidencia de horarios</strong>: permitir varios partidos a la misma hora (con la penalización). El espacio crece de $n!$ a $n^n$ y haría falta usar metaheurísticas sí o sí.</li>
+<li><strong>Planificar toda la temporada</strong>: optimizar las 38 jornadas de forma conjunta, teniendo en cuenta que un equipo no debería jugar siempre a la misma hora.</li>
+<li><strong>Datos reales de audiencia</strong>: usar históricos de Movistar+ u otras plataformas en vez de las estimaciones del enunciado.</li>
+<li><strong>Más restricciones</strong>: equipos de la misma ciudad no juegan el mismo día, horarios preferentes por contrato de TV, etc.</li>
+<li><strong>Otros algoritmos</strong>: probar algoritmos genéticos o formularlo como un problema de programación lineal entera (ILP).</li>
 </ul>
-</li>
-<li><p><strong>Algoritmos genéticos y programación entera</strong>: Formular como ILP con restricciones lineales, o usar GA con operadores de cruce especializados para permutaciones.</p>
-</li>
-</ol>
 </div>
 </div>
 </div>
