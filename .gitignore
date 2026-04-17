@@ -1,6 +1,9 @@
 # PDFs del curso (material del profesor, no subir)
 Teoria/
 *.pdf
+# Excepciones: entregas propias del alumno
+!Algoritmos_AG1.pdf
+!Algoritmos_AG2.pdf
 
 # Videos
 *.mp4
